@@ -25,7 +25,6 @@ public class ExternalApiGatewayImpl implements ExternalApiGateway {
 	@Override
 	public ProviderNews getHackerNews() {
 		try {
-			
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
 		    headers.set("Accept", MediaType.TEXT_HTML_VALUE);
