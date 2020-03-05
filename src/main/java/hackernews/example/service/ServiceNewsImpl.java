@@ -23,28 +23,26 @@ public class ServiceNewsImpl implements ServiceNews {
 
 	@Override
 	public void saveNews() {
-		newsRepository.deleteAll();
 		ProviderNews externalApiObj = gateway.getHackerNews();
-		List<Hit> externalApiList = externalApiObj.getHits();
-		if (externalApiList != null) {
-			externalApiList.stream().filter(Objects::nonNull)
-			.filter(x -> x.getStory_id()>0)
-			.forEach((p) -> {
-				News news =  new News();
-				news.setAuthor(p.getAuthor());
-				news.setId(p.getStory_id());
-				news.setTitle(p.getStory_title());
-				news.setCreationDate(p.getCreated_at());
-				newsRepository.save(news);
-			});
+		if (externalApiObj != null) {
+			List<Hit> externalApiList = externalApiObj.getHits();
+			if (externalApiList != null) {
+				newsRepository.deleteAll();
+				externalApiList.stream().filter(Objects::nonNull).filter(x -> x.getStory_id() > 0).forEach((p) -> {
+					News news = new News();
+					news.setAuthor(p.getAuthor());
+					news.setId(p.getStory_id());
+					news.setTitle(p.getStory_title());
+					news.setCreationDate(p.getCreated_at());
+					newsRepository.save(news);
+				});
+			}
 		}
 	}
 
 	@Override
 	public List<News> getAllNews() {
-		return StreamSupport
-				  .stream(newsRepository.findAll().spliterator(), false)
-				  .collect(Collectors.toList());
+		return StreamSupport.stream(newsRepository.findAll().spliterator(), false).collect(Collectors.toList());
 	}
 
 	@Override
@@ -52,7 +50,6 @@ public class ServiceNewsImpl implements ServiceNews {
 		try {
 			newsRepository.deleteById(id);
 		} catch (Exception e) {
-			System.out.println(e);
 			return false;
 		}
 		return true;
